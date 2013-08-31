@@ -82,39 +82,39 @@ def get_user_sentiment(tweet_list,scores):
         all_sentiments.append(check_sentiment(tweet,scores))
     return sum(all_sentiments)/float(len(all_sentiments))
     
-#if __name__ == '__main__':
-twitter_deets_file, sentiment_file = get_files()
+if __name__ == '__main__':
+    twitter_deets_file, sentiment_file = get_files()
+        
+    #convert to dictionary
+    twitter_deets = file_to_dict(twitter_deets_file)
     
-#convert to dictionary
-twitter_deets = file_to_dict(twitter_deets_file)
-
-#set oauth consumer and token
-oauth_consumer = oauth.Consumer(key=twitter_deets['consumer_key'], secret=twitter_deets['consumer_secret'])
-oauth_token    = oauth.Token(key=twitter_deets['access_key'], secret=twitter_deets['access_secret'])
-
-#sentiment scores to dictionary
-scores_dict = file_to_dict(sentiment_file,to_float=True)
-
-#assign parrameters for twitter to filter tweets
-track_parameter = raw_input("Please enter track parameter's (comma seperated list): ")
-n_tweets = 10 #number of tweets to scan
-average_size = 20 #size of moving average
-
-search_parameters = [("track",track_parameter)]
-
-moving_average = []
-for i in get_twitter_data(search_parameters,oauth_consumer,oauth_token,n_tweets):
-    #load tweet
-    tweet_info = json.loads(i)
-    #assign user parameters and pull list of tweets from specific user
-    user_parameters = [('user_id',tweet_info['user']['id']),('count',20)]
-    user_tweet_list = json.loads(get_user_data(user_parameters, oauth_consumer, oauth_token))
-    #calculate average user sentiment for 'count' posts
-    user_sentiment = get_user_sentiment(user_tweet_list,scores_dict)
-    tweet_sentiment = check_sentiment(tweet_info,scores_dict)
-    print "User Sentiment: " + str(user_sentiment)
-    print "Tweet Sentiment: " + str(tweet_sentiment)
-    print "Adjusted User Sentiment: " + str(tweet_sentiment-user_sentiment)
-    print tweet_info.get('text','No tweet information').encode('utf-8').lower()
-    #print sum(moving_average[-average_size:])/float(len(moving_average[-average_size:]))
+    #set oauth consumer and token
+    oauth_consumer = oauth.Consumer(key=twitter_deets['consumer_key'], secret=twitter_deets['consumer_secret'])
+    oauth_token    = oauth.Token(key=twitter_deets['access_key'], secret=twitter_deets['access_secret'])
+    
+    #sentiment scores to dictionary
+    scores_dict = file_to_dict(sentiment_file,to_float=True)
+    
+    #assign parrameters for twitter to filter tweets
+    track_parameter = raw_input("Please enter track parameter's (comma seperated list): ")
+    n_tweets = 10 #number of tweets to scan
+    average_size = 20 #size of moving average
+    
+    search_parameters = [("track",track_parameter)]
+    
+    moving_average = []
+    for i in get_twitter_data(search_parameters,oauth_consumer,oauth_token,n_tweets):
+        #load tweet
+        tweet_info = json.loads(i)
+        #assign user parameters and pull list of tweets from specific user
+        user_parameters = [('user_id',tweet_info['user']['id']),('count',20)]
+        user_tweet_list = json.loads(get_user_data(user_parameters, oauth_consumer, oauth_token))
+        #calculate average user sentiment for 'count' posts
+        user_sentiment = get_user_sentiment(user_tweet_list,scores_dict)
+        tweet_sentiment = check_sentiment(tweet_info,scores_dict)
+        print "User Sentiment: " + str(user_sentiment)
+        print "Tweet Sentiment: " + str(tweet_sentiment)
+        print "Adjusted User Sentiment: " + str(tweet_sentiment-user_sentiment)
+        print tweet_info.get('text','No tweet information').encode('utf-8').lower()
+        #print sum(moving_average[-average_size:])/float(len(moving_average[-average_size:]))
 
