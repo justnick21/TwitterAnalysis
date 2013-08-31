@@ -58,10 +58,10 @@ def get_twitter_data(input_parameters, oath_consumer, oauth_token, n):
     parameters = input_parameters
     response = twitter_request(url, parameters, oath_consumer, oauth_token)
     i = 1
-    for line in response:
-        i += 1
+    for line in response:    
         yield line.strip()
         if i == n: return
+        i += 1
            
 def check_sentiment(tweet_info,scores):
     tweet_text = tweet_info.get('text',None).encode('utf-8').lower()
@@ -70,6 +70,10 @@ def check_sentiment(tweet_info,scores):
  	for word in tweet_text.split():
             all_scores.append(scores.get(word, 0))
     return sum(all_scores)
+    
+def user_sentiment(tweet_info):
+    print 1
+    
 
 if __name__ == '__main__':
     twitter_deets_file, sentiment_file = get_files()
@@ -97,5 +101,5 @@ if __name__ == '__main__':
         moving_average.append(check_sentiment(tweet_info,scores_dict))
         print tweet_info.get('text','No tweet information').encode('utf-8').lower()
         print sum(moving_average[-average_size:])/float(len(moving_average[-average_size:]))
-        
+    
 
