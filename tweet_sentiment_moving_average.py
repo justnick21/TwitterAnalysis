@@ -99,6 +99,7 @@ if __name__ == '__main__':
     track_parameter = raw_input("Please enter track parameter's (comma seperated list): ")
     n_tweets = 10 #number of tweets to scan
     average_size = 20 #size of moving average
+    allow_retweets = False
     
     search_parameters = [("track",track_parameter)]
     
@@ -106,15 +107,18 @@ if __name__ == '__main__':
     for i in get_twitter_data(search_parameters,oauth_consumer,oauth_token,n_tweets):
         #load tweet
         tweet_info = json.loads(i)
-        #assign user parameters and pull list of tweets from specific user
-        user_parameters = [('user_id',tweet_info['user']['id']),('count',20)]
-        user_tweet_list = json.loads(get_user_data(user_parameters, oauth_consumer, oauth_token))
-        #calculate average user sentiment for 'count' posts
-        user_sentiment = get_user_sentiment(user_tweet_list,scores_dict)
-        tweet_sentiment = check_sentiment(tweet_info,scores_dict)
-        print "User Sentiment: " + str(user_sentiment)
-        print "Tweet Sentiment: " + str(tweet_sentiment)
-        print "Adjusted User Sentiment: " + str(tweet_sentiment-user_sentiment)
-        print tweet_info.get('text','No tweet information').encode('utf-8').lower()
-        #print sum(moving_average[-average_size:])/float(len(moving_average[-average_size:]))
-
+        if ('retweeted_status' not in tweet_info) or allow_retweets:
+            #assign user parameters and pull list of tweets from specific user
+            user_parameters = [('user_id',tweet_info['user']['id']),('count',20)]
+            user_tweet_list = json.loads(get_user_data(user_parameters, oauth_consumer, oauth_token))
+            #calculate average user sentiment for 'count' posts
+            user_sentiment = get_user_sentiment(user_tweet_list,scores_dict)
+            tweet_sentiment = check_sentiment(tweet_info,scores_dict)
+            moving_average.append(tweet_sentiment-user_sentiment)
+            print tweet_info.get('text','No tweet information').encode('utf-8').lower()
+            print "User Sentiment: " + str(user_sentiment) + ", Tweet Sentiment: " \
+                + str(tweet_sentiment) + ", Adjusted User Sentiment: " + str(tweet_sentiment-user_sentiment) 
+            print sum(moving_average[-average_size:])/float(len(moving_average[-average_size:])) 
+            print "\n"
+        
+        #uk geotag 54.476422,-1.984406,600
