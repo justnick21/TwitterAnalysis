@@ -4,7 +4,6 @@ import oauth2 as oauth
 import urllib2 as urllib
 import json
 import re
-import math
 
 https_handler = urllib.HTTPSHandler()
 signature_method = oauth.SignatureMethod_HMAC_SHA1()
@@ -55,17 +54,14 @@ def get_twitter_data(input_parameters, oath_consumer, oauth_token, n):
     url = "https://stream.twitter.com/1.1/statuses/filter.json"
     parameters = input_parameters
     response = twitter_request(url, parameters, oath_consumer, oauth_token)
-    i = 1
     for line in response:    
-        yield line.strip()
-        if i == n: return
-        i += 1
-        
+        yield json.loads(line.strip())
+       
 def get_user_data(input_parameters, oath_consumer, oauth_token):
     url = "https://api.twitter.com/1.1/statuses/user_timeline.json"
     parameters = input_parameters
     response = twitter_request(url, parameters, oath_consumer, oauth_token)
-    return response.read()
+    return json.loads(response.read())
 
            
 def check_sentiment(tweet_info,scores):
@@ -104,21 +100,27 @@ if __name__ == '__main__':
     search_parameters = [("track",track_parameter)]
     
     moving_average = []
-    for i in get_twitter_data(search_parameters,oauth_consumer,oauth_token,n_tweets):
-        #load tweet
-        tweet_info = json.loads(i)
+    x = 1
+    for tweet_info in get_twitter_data(search_parameters,oauth_consumer,oauth_token,n_tweets):
         if ('retweeted_status' not in tweet_info) or allow_retweets:
             #assign user parameters and pull list of tweets from specific user
             user_parameters = [('user_id',tweet_info['user']['id']),('count',20)]
-            user_tweet_list = json.loads(get_user_data(user_parameters, oauth_consumer, oauth_token))
+            user_tweet_list = get_user_data(user_parameters, oauth_consumer, oauth_token)
             #calculate average user sentiment for 'count' posts
             user_sentiment = get_user_sentiment(user_tweet_list,scores_dict)
             tweet_sentiment = check_sentiment(tweet_info,scores_dict)
             moving_average.append(tweet_sentiment-user_sentiment)
+            #print details
             print tweet_info.get('text','No tweet information').encode('utf-8').lower()
             print "User Sentiment: " + str(user_sentiment) + ", Tweet Sentiment: " \
                 + str(tweet_sentiment) + ", Adjusted User Sentiment: " + str(tweet_sentiment-user_sentiment) 
             print sum(moving_average[-average_size:])/float(len(moving_average[-average_size:])) 
             print "\n"
+            if x == n_tweets: break
+            x += 1
         
         #uk geotag 54.476422,-1.984406,600
+        
+        
+        352194741
+        314177871
