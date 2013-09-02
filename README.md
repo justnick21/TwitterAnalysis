@@ -3,7 +3,7 @@ TwitterAnalysis
 
 Repository for demonstrating work on twitter analysis.
 
-all files require a completed twitter details file in the format shown in td.txt
+all files require a completed twitter details file in the format shown in td.txt (tab deliminated)
 
 Twitter_tools.py 
 Pulls tweets from stream based on parameters or pulls tweets from users.
