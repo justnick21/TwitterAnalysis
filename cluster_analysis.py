@@ -73,7 +73,7 @@ if __name__ == "__main__":
         set_category_words[i] = collections.Counter(category_words[i])
         for j in set_category_words:
             if i is not j:
-                removed_duplicates[i] = [k for k in category_words[i] if set_category_words[j][k] < 3]
+                removed_duplicates[i] = [k for k in category_words[i] if set_category_words[j][k] < 1]
     
     for i in removed_duplicates:
         removed_duplicates[i] = collections.Counter(removed_duplicates[i])
