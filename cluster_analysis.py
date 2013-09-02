@@ -43,14 +43,16 @@ if __name__ == "__main__":
     search_parameters = [("track",track_parameter)]
     while True:
         n_tweets = raw_input("Number of tweets to scan: ")
+        n_clusters = raw_input("Number of clusters to divide tweets into: ")
         try:
             n_tweets = int(n_tweets)
+            n_clusters = int(n_clusters)
             break
         except:
-            print "Number of tweets must be an integer!\n"
+            print "Number of tweets and clusters must be integers!\n"
     
     tweets = gather_tweets(search_parameters,n_tweets)
-    word_arrays, tweet_categories = cluster_tweets(tweets,10)
+    word_arrays, tweet_categories = cluster_tweets(tweets,n_clusters)
     
     """
     for i in range(len(tweets)):
@@ -58,28 +60,28 @@ if __name__ == "__main__":
         print "placed in category: " + str(tweet_categories[i]) + "\n"
     """
     
-category_words = collections.defaultdict(list)
-for i in range(len(tweet_categories)):
-    category_words[tweet_categories[i]].append(word_arrays[i])
-#flattens list, counts and counts
-
-count_category_words = {}
-set_category_words = {}
-removed_duplicates = {}
-for i in category_words:
-    category_words[i] = [item for sublist in category_words[i] for item in sublist]
-    set_category_words[i] = collections.Counter(category_words[i])
-    for j in set_category_words:
-        if i is not j:
-            removed_duplicates[i] = [k for k in category_words[i] if set_category_words[j][k] < 3]
-
-for i in removed_duplicates:
-    removed_duplicates[i] = collections.Counter(removed_duplicates[i])
-    print removed_duplicates[i].most_common(5)
+    category_words = collections.defaultdict(list)
+    for i in range(len(tweet_categories)):
+        category_words[tweet_categories[i]].append(word_arrays[i])
+    #flattens list, counts and counts
     
-
+    count_category_words = {}
+    set_category_words = {}
+    removed_duplicates = {}
+    for i in category_words:
+        category_words[i] = [item for sublist in category_words[i] for item in sublist]
+        set_category_words[i] = collections.Counter(category_words[i])
+        for j in set_category_words:
+            if i is not j:
+                removed_duplicates[i] = [k for k in category_words[i] if set_category_words[j][k] < 3]
     
+    for i in removed_duplicates:
+        removed_duplicates[i] = collections.Counter(removed_duplicates[i])
+        print removed_duplicates[i].most_common(5)
+        
     
+        
+        
 
     
                             
