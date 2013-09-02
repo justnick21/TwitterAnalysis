@@ -49,8 +49,16 @@ def main():
     scores_dict = file_to_dict(sentiment_file)
     
     track_parameter = raw_input("Enter search terms: ")
-    n_tweets = int(raw_input("Number of tweets to scan: "))
-    average_size = int(raw_input("Size of moving average: "))
+    
+    while True:
+        n_tweets = raw_input("Number of tweets to scan: ")
+        average_size = raw_input("Size of moving average: ")
+        try:
+            n_tweets = int(n_tweets)
+            average_size = int(average_size)
+            break
+        except:
+            print "Number of tweets and size of moving average must be integers!"
     
     search_parameters = [("track",track_parameter)]
     moving_average = []
