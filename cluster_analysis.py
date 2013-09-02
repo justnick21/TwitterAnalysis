@@ -18,7 +18,7 @@ def get_file():
         sys.exit(0)   
         
 def gather_tweets(search_parameters,n_tweets):
-    twitter_details_file = 'td.txt'#get_file()
+    twitter_details_file = get_file()
     twitter_access = twitter_tools.twitter_handler(twitter_details_file)
     
     tweets = [] 
@@ -39,10 +39,10 @@ def cluster_tweets(tweets,clusters):
     return vectorizer.inverse_transform(tweet_word_matrix), clf.fit_predict(tweet_word_matrix)
     
 if __name__ == "__main__":
-    track_parameter = 'TransferDeadlineDay'#raw_input("Enter search terms: ")
+    track_parameter = raw_input("Enter search terms: ")
     search_parameters = [("track",track_parameter)]
     while True:
-        n_tweets = 500#raw_input("Number of tweets to scan: ")
+        n_tweets = raw_input("Number of tweets to scan: ")
         try:
             n_tweets = int(n_tweets)
             break
